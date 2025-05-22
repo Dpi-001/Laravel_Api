@@ -51,6 +51,12 @@ public function login(Request $request)
         'token' => $token,
     ]);
 }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+      return response('Logged out successfully', 200);
     }
 
 
+}
