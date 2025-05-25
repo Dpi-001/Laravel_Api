@@ -43,7 +43,9 @@ public function store(Request $request)
      */
     public function show(Todo $todo)
     {
-      if ($todo->user_id !== auth()->user()->id) {
+        $todo = Todo::findOrFail($todo->id);
+
+        if ($todo->user_id !== auth()->user()->id) {
             return response([
                 'message' => 'Unauthorized',
             ], 403);
@@ -57,8 +59,10 @@ public function store(Request $request)
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Todo $todo)
+    public function update(Request $request, $id)
     {
+        $todo = Todo::findOrFail($id);
+
         if ($todo->user_id !== auth()->user()->id) {
             return response([
                 'message' => 'Unauthorized',
@@ -69,7 +73,6 @@ public function store(Request $request)
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'completed' => 'integer',
-
         ]);
 
         $todo->update($validated);
@@ -77,7 +80,6 @@ public function store(Request $request)
         return response([
             'todo' => $todo,
         ]);
-
     }
 
     /**
@@ -85,7 +87,7 @@ public function store(Request $request)
      */
     public function destroy(Todo $todo)
     {
-        if ($todo->user_id !== auth()->user()->id) {
+        if ($todo->id !== (int)request()->route('todo')) {
             return response([
                 'message' => 'Unauthorized',
             ], 403);
